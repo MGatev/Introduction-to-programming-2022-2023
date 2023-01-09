@@ -18,3 +18,7 @@ int countAdjacentMines(int row, int col, int mines[][2],
 	char playingBoard[][MAX_SIZE], const int boardSize);
 
 void makeMove(int* x, int* y);
+
+bool playMinesweeperUtil(char myBoard[][MAX_SIZE], char playingBoard[][MAX_SIZE],
+	int mines[][2], int amountOfMines,
+	int boardSize, int row, int col, int* movesLeft);

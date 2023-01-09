@@ -226,6 +226,119 @@ void makeMove(int* x, int* y)
 	return;
 }
 
+// A Recursive Function to play the Minesweeper Game
+bool playMinesweeperUtil(char myBoard[][MAX_SIZE], char playingBoard[][MAX_SIZE],
+						 int mines[][2], int amountOfMines,
+						 int boardSize, int row, int col, int* movesLeft)
+{
+	// Base Case
+	if (myBoard[row][col] != '-')
+		return (false);
+
+	// You opened a mine
+	// Game Over
+	if (playingBoard[row][col] == '*')
+	{
+		myBoard[row][col] = '*';
+
+		for (int i = 0; i < amountOfMines; i++)
+		{
+			myBoard[mines[i][0]][mines[i][1]] = '*';
+		}
+
+		printBoard(myBoard, boardSize);
+
+		printf("\nYou lost!\n");
+
+		return (true);
+	}
+
+	else
+	{
+		// Calculate the number of adjacent mines and put it
+		// on the board
+		int amountOfAdjacentMines = countAdjacentMines(row, col, mines, playingBoard, boardSize);
+
+		(*movesLeft)--;
+
+		myBoard[row][col] = amountOfAdjacentMines + '0';
+
+		if (!amountOfAdjacentMines)
+		{
+			//Checking if the 'neighbour' cell is valid
+			//Checking if there is a mine there
+			//Checking the cells around the current cells
+			//clockwise starting from 12 o'clock 
+
+			//up 'neighbour' - 12 o'clock
+			if (isValid(row - 1, col, boardSize) == true)
+			{
+				if (isMine(row - 1, col, playingBoard) == false)
+					playMinesweeperUtil(myBoard, playingBoard, mines, amountOfMines,
+						boardSize, row - 1, col, movesLeft);
+			}
+
+			//diagonal up-right 'neighbour' - 1:30 o'clock
+			if (isValid(row - 1, col + 1, boardSize) == true)
+			{
+				if (isMine(row - 1, col + 1, playingBoard) == false)
+					playMinesweeperUtil(myBoard, playingBoard, mines, amountOfMines,
+						boardSize, row - 1, col + 1, movesLeft);
+			}
+
+			//right 'neighbour' - 3 o'clock
+			if (isValid(row, col + 1, boardSize) == true)
+			{
+				if (isMine(row, col + 1, playingBoard) == false)
+					playMinesweeperUtil(myBoard, playingBoard, mines, amountOfMines,
+						boardSize, row, col + 1, movesLeft);
+			}
+
+			//diagonal down-right 'neighbour' - 4:30 o'clock
+			if (isValid(row + 1, col + 1, boardSize) == true)
+			{
+				if (isMine(row + 1, col + 1, playingBoard) == false)
+					playMinesweeperUtil(myBoard, playingBoard, mines, amountOfMines,
+						boardSize, row + 1, col + 1, movesLeft);
+			}
+
+			//down 'neighbour' - 6 o'clock
+			if (isValid(row + 1, col, boardSize) == true)
+			{
+				if (isMine(row + 1, col, playingBoard) == false)
+					playMinesweeperUtil(myBoard, playingBoard, mines, amountOfMines,
+						boardSize, row + 1, col, movesLeft);
+			}
+
+			//diagonal down-left 'neighbour' - 7:30 o'clock
+			if (isValid(row + 1, col - 1, boardSize) == true)
+			{
+				if (isMine(row + 1, col - 1, playingBoard) == false)
+					playMinesweeperUtil(myBoard, playingBoard, mines, amountOfMines,
+						boardSize, row + 1, col - 1, movesLeft);
+			}
+
+			//left 'neighbour' - 9 o'clock
+			if (isValid(row, col - 1, boardSize) == true)
+			{
+				if (isMine(row, col - 1, playingBoard) == false)
+					playMinesweeperUtil(myBoard, playingBoard, mines, amountOfMines,
+						boardSize, row, col - 1, movesLeft);
+			}
+
+			//diagonal up-left 'neighbour' - 7:30 o'clock
+			if (isValid(row - 1, col - 1, boardSize) == true)
+			{
+				if (isMine(row - 1, col - 1, playingBoard) == false)
+					playMinesweeperUtil(myBoard, playingBoard, mines, amountOfMines,
+						boardSize, row - 1, col - 1, movesLeft);
+			}
+		}
+
+		return (false);
+	}
+}
+
 int main()
 {
 	int boardSize{}, amountOfMines{};
