@@ -14,4 +14,7 @@ bool isValid(int row, int col, const int boardSize);
 
 bool isMine(int row, int col, char board[][MAX_SIZE]);
 
+int countAdjacentMines(int row, int col, int mines[][2],
+	char playingBoard[][MAX_SIZE], const int boardSize);
+
 void makeMove(int* x, int* y);

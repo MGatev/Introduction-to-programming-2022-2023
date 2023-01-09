@@ -50,7 +50,7 @@ void CreateBoardBeforeStart(char myBoard[][MAX_SIZE], char playingBoard[][MAX_SI
 	return;
 }
 
-void placeMines(int mines[][2], const int amountOfMines, char realBoard[][MAX_SIZE], const int boardSize)
+void placeMines(int mines[][2], const int amountOfMines, char playingBoard[][MAX_SIZE], const int boardSize)
 {
 	//mines store the coordinates of where a mine is placed
 
@@ -76,7 +76,7 @@ void placeMines(int mines[][2], const int amountOfMines, char realBoard[][MAX_SI
 			mines[i][1] = y;
 
 			// Place the mine
-			realBoard[mines[i][0]][mines[i][1]] = '*';
+			playingBoard[mines[i][0]][mines[i][1]] = '*';
 			mark[random] = true;
 			i++;
 		}
@@ -131,6 +131,92 @@ bool isMine(int row, int col, char board[][MAX_SIZE])
 		return (false);
 }
 
+int countAdjacentMines(int row, int col, int mines[][2],
+	char playingBoard[][MAX_SIZE], const int boardSize)
+{
+	//Checking if the 'neighbour' cell is valid
+	//Checking if there is a mine there
+	//and adding it to the counter
+	//Checking the cells around the current cells
+	//clockwise starting from 12 o'clock 
+
+	int counter{};
+
+	//up 'neighbour' - 12 o'clock
+	if (isValid(row - 1, col, boardSize) == true)
+	{
+		if (isMine(row - 1, col, playingBoard) == true)
+		{
+			counter++;
+		}
+	}
+
+	//diagonal up-right 'neighbour' - 1:30 o'clock
+	if (isValid(row - 1, col + 1, boardSize) == true)
+	{
+		if (isMine(row - 1, col + 1, playingBoard) == true)
+		{
+			counter++;
+		}
+	}
+
+	//right 'neighbour' - 3 o'clock
+	if (isValid(row, col + 1, boardSize) == true)
+	{
+		if (isMine(row, col + 1, playingBoard) == true)
+		{
+			counter++;
+		}
+	}
+
+	//diagonal down-right 'neighbour' - 4:30 o'clock
+	if (isValid(row + 1, col + 1, boardSize) == true)
+	{
+		if (isMine(row + 1, col + 1, playingBoard) == true)
+		{
+			counter++;
+		}
+	}
+
+	//down 'neighbour' - 6 o'clock
+	if (isValid(row + 1, col, boardSize) == true)
+	{
+		if (isMine(row + 1, col, playingBoard) == true)
+		{
+			counter++;
+		}
+	}
+
+	//diagonal down-left 'neighbour' - 7:30 o'clock
+	if (isValid(row + 1, col - 1, boardSize) == true)
+	{
+		if (isMine(row + 1, col - 1, playingBoard) == true)
+		{
+			counter++;
+		}
+	}
+
+	//left 'neighbour' - 9 o'clock
+	if (isValid(row, col - 1, boardSize) == true)
+	{
+		if (isMine(row, col - 1, playingBoard) == true)
+		{
+			counter++;
+		}
+	}
+
+	//diagonal up-left 'neighbour' - 10:30 o'clock
+	if (isValid(row - 1, col - 1, boardSize) == true)
+	{
+		if (isMine(row - 1, col - 1, playingBoard) == true)
+		{
+			counter++;
+		}
+	}
+
+	return counter;
+}
+
 void makeMove(int* x, int* y)
 {
 	// Take the input move
@@ -146,11 +232,13 @@ int main()
 
 	InputValidation(boardSize, amountOfMines);
 
-	char board[MAX_SIZE][MAX_SIZE]{};
+	char myBoard[MAX_SIZE][MAX_SIZE]{};
 
-	CreateBoardBeforeStart(board, boardSize);
+	char playingBoard[MAX_SIZE][MAX_SIZE]{};
 
-	printBoard(board, boardSize);
+	CreateBoardBeforeStart(myBoard, playingBoard, boardSize);
+
+	printBoard(myBoard, boardSize);
 
 	return 0;
 }
