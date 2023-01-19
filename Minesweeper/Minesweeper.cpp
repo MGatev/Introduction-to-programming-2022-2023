@@ -14,15 +14,30 @@
 
 
 #include<iostream>
-#include"Functions.h"
+#include "Functions.h"
 
 using namespace std;
 
 //Constants declared in the header file
 
+//Function to print a message before the game starts
+void PrintWelcomeMessage()
+{
+	printf("Welcome to the Minesweeper game!\n\n");
+	printf("You win if you are able to reveal all non - mines cells and you lose if you open a mine.\n\n");
+	printf("The symbols used are:\n");
+	printf("DASH(-) --> if the cell is unrevealed\n");
+	printf("QUESTION MARK(?) --> if you 'mark' the cell\n");
+	printf("ASTERIX(*) --> if you hit a mine this symbol appears\n\n");
+	printf("Good luck and have fun!\n\n");
+}
+
+//Function to read the user's input at the start of the game
 void InputValidation(int& boardSize, int& amountOfMines)
 {
-	cout << "Please insert the dimensions (N) of the playing board (number between 3 and 10):" << endl;
+	PrintWelcomeMessage();
+
+	printf("Please insert the dimensions (N) of the playing board (number between 3 and 10): ");
 
 	cin >> boardSize;
 
@@ -31,12 +46,15 @@ void InputValidation(int& boardSize, int& amountOfMines)
 	{
 		if (boardSize < 3 || boardSize > 10)
 		{
-			cout << "You have entered incorrect size. Please insert a number between 3 and 10." << endl;
+			printf("\n");
+			printf("You have entered incorrect size. Please insert a number between 3 and 10: ");
+
 			cin >> boardSize;
 		}
 	}
 
-	cout << "Please choose how many mines do you want to play with (number between 1 and 3*N):" << endl;
+	printf("\n");
+	printf("Please choose how many mines do you want to play with (number between 1 and 3*N): ");
 
 	cin >> amountOfMines;
 
@@ -45,12 +63,18 @@ void InputValidation(int& boardSize, int& amountOfMines)
 	{
 		if (amountOfMines < 3 || amountOfMines >(3 * boardSize))
 		{
-			cout << "You have entered incorrect number. Please insert a number between 1 and 3 * N, where N is the dimensions of the playing board." << endl;
+			printf("\n");
+			printf("You have entered incorrect number.\nPlease insert a number between 1 and 3 * N,"
+			"where N is the dimensions of the playing board : ");
+
 			cin >> amountOfMines;
 		}
 	}
+
+	printf("\n");
 }
 
+//Initialise the two boards
 void CreateBoardBeforeStart(char myBoard[][MAX_SIZE], char playingBoard[][MAX_SIZE],
 	const int boardSize)
 {
@@ -66,6 +90,7 @@ void CreateBoardBeforeStart(char myBoard[][MAX_SIZE], char playingBoard[][MAX_SI
 	return;
 }
 
+//Place mines in the board which is not modified throughout the game
 void placeMines(int mines[][2], const int amountOfMines, char playingBoard[][MAX_SIZE],
 	const int boardSize)
 {
@@ -102,36 +127,34 @@ void placeMines(int mines[][2], const int amountOfMines, char playingBoard[][MAX
 	return;
 }
 
+//Function to print the board
 void printBoard(char myBoard[][MAX_SIZE], const int boardSize)
 {
-	printf("    ");
+	printf("      ");
 
 	for (int i = 0; i < boardSize; i++)
 	{
-		printf("%d    ", i);
+		printf("%d      ", i);
 	}
 
 	printf("\n\n");
 
 	for (int i = 0; i < boardSize; i++)
 	{
-		printf("%d   ", i);
+		printf(" %d   ", i);
 
 		for (int j = 0; j < boardSize; j++)
 		{
-			printf("%c    ", myBoard[i][j]);
+			printf("|%c|    ", myBoard[i][j]);
 		}
 
-		printf("\n");
-		printf("\n");
-		printf("\n");
-
+		printf("\n\n\n");
 	}
 }
 
+//Checks if the given coordinates are valid
 bool isValid(int row, int col, const int boardSize)
 {
-	//Checks if the given coordinates are valid
 	if ((row >= 0 && row < boardSize) && (col >= 0 && col < boardSize))
 	{
 		return true;
@@ -142,9 +165,9 @@ bool isValid(int row, int col, const int boardSize)
 	}
 }
 
+//Checks if on the given coordinates have a mine
 bool isMine(int row, int col, char board[][MAX_SIZE])
 {
-	//Checks if on the given coordinates have a mine
 	if (board[row][col] == '*')
 		return (true);
 	else
@@ -237,6 +260,7 @@ int countAdjacentMines(int row, int col, int mines[][2],
 	return counter;
 }
 
+//Get the user's move
 char* makeMove(int& x, int& y)//, char* &command)
 {
 	// Take the input move
@@ -254,8 +278,9 @@ bool playMinesweeperUtil(char myBoard[][MAX_SIZE], char playingBoard[][MAX_SIZE]
 						 int mines[][2], int amountOfMines,
 						 int boardSize, int row, int col, int* movesLeft, char* command)
 {
-	bool isMark{}, isUnmark{}, isOpen{};
-
+	bool isMark{}, isUnmark{}, isOpen{}; 
+	
+	//'read' the user's command
 	if (command[0] == 'm' && command[1] == 'a' &&
 		command[2] == 'r' && command[3] == 'k')
 	{
@@ -272,12 +297,14 @@ bool playMinesweeperUtil(char myBoard[][MAX_SIZE], char playingBoard[][MAX_SIZE]
 		isUnmark = true;
 	}
 
+	//If the user wants to mark the cell
 	if (isMark == true)
 	{
 		myBoard[row][col] = '?';
 		return (false);
 	}
 
+	//If the user want to unmark the cell
 	else if (isUnmark == true)
 	{
 		if (myBoard[row][col] == '?')
@@ -285,9 +312,16 @@ bool playMinesweeperUtil(char myBoard[][MAX_SIZE], char playingBoard[][MAX_SIZE]
 			myBoard[row][col] = '-';
 		}
 
+		else
+		{
+			printf("\n\n\n                                           ");
+			printf("This cell hasn't been marked!\n\n\n\n");
+		}
+
 		return (false);
 	}
 
+	//If the user wants to open a cell
 	else if (isOpen == true)
 	{
 		// Base Case
@@ -300,6 +334,7 @@ bool playMinesweeperUtil(char myBoard[][MAX_SIZE], char playingBoard[][MAX_SIZE]
 		{
 			myBoard[row][col] = '*';
 
+			//Print where all the mines are
 			for (int i = 0; i < amountOfMines; i++)
 			{
 				myBoard[mines[i][0]][mines[i][1]] = '*';
@@ -445,7 +480,9 @@ void playMinesweeper(int boardSize, int amountOfMines)
 
 	while (gameOver == false)
 	{
+		printf("\n");
 		printf("Current Status of Board : \n");
+		printf("\n");
 		printBoard(myBoard,  boardSize);
 
 		char* command = makeMove(x, y);
